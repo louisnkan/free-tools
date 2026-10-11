@@ -1,0 +1,721 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101410">
+  <meta name="description" content="A simple profit calculator for small sellers. Calculate profit, margin, and markup in Nigerian Naira.">
+  <title>Profit Calculator — Small Seller</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101410;
+      --surface: #191f1a;
+      --surface-2: #222a23;
+      --border: #303a31;
+      --text: #f0f5ef;
+      --muted: #9aa79a;
+      --green: #65e68a;
+      --green-dark: #183e25;
+      --red: #ff8585;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    .container {
+      width: min(100% - 32px, 560px);
+      margin: 0 auto;
+      padding: 32px 0 40px;
+    }
+
+    header {
+      margin-bottom: 26px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      background: var(--green-dark);
+      color: var(--green);
+      border-radius: 13px;
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .brand-name {
+      font-size: 15px;
+      font-weight: 750;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(29px, 7vw, 38px);
+      line-height: 1.15;
+      letter-spacing: -1.3px;
+    }
+
+    .intro {
+      max-width: 400px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .panel {
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .section-title {
+      margin: 0 0 20px;
+      font-size: 16px;
+      font-weight: 750;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field:last-of-type {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .hint {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      min-height: 51px;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      transition: border-color 0.15s;
+    }
+
+    .input-wrap:focus-within {
+      border-color: var(--green);
+    }
+
+    .currency {
+      padding-left: 14px;
+      color: var(--green);
+      font-weight: 750;
+    }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 14px;
+      background: transparent;
+      color: var(--text);
+      border: 0;
+      outline: none;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .quantity-input {
+      padding-left: 14px;
+    }
+
+    .calculate-btn {
+      display: block;
+      width: 100%;
+      min-height: 51px;
+      padding: 13px 18px;
+      background: var(--green);
+      color: #102016;
+      border: 0;
+      border-radius: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.15s;
+    }
+
+    .calculate-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .calculate-btn:active {
+      transform: scale(0.99);
+    }
+
+    .calculate-btn:focus-visible,
+    .reset-btn:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+    }
+
+    .results {
+      margin-top: 20px;
+    }
+
+    .results-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .results-heading h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .live-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .hero-result {
+      padding: 22px;
+      background: linear-gradient(140deg, #193c24, #17271b);
+      border: 1px solid #315b3b;
+      border-radius: var(--radius);
+    }
+
+    .hero-label {
+      color: #b9d9c0;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .hero-amount {
+      margin: 6px 0 4px;
+      overflow-wrap: anywhere;
+      color: var(--green);
+      font-size: clamp(31px, 8vw, 42px);
+      font-weight: 850;
+      letter-spacing: -1.4px;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-caption {
+      color: #b9d9c0;
+      font-size: 12px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+      margin-top: 12px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 7px;
+      overflow-wrap: anywhere;
+      font-size: clamp(17px, 4.5vw, 22px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-value.positive {
+      color: var(--green);
+    }
+
+    .metric-value.negative {
+      color: var(--red);
+    }
+
+    .breakdown {
+      margin-top: 16px;
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .breakdown h3 {
+      margin: 0 0 15px;
+      font-size: 14px;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .breakdown-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .breakdown-row span:first-child {
+      color: var(--muted);
+    }
+
+    .breakdown-row span:last-child {
+      text-align: right;
+      font-weight: 650;
+      overflow-wrap: anywhere;
+    }
+
+    .reset-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 17px;
+    }
+
+    .reset-btn {
+      padding: 9px 15px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .reset-btn:hover {
+      color: var(--text);
+      border-color: var(--muted);
+    }
+
+    .note {
+      margin: 20px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .note strong {
+      color: var(--green);
+      font-weight: 650;
+    }
+
+    .error {
+      display: none;
+      margin: 0 0 15px;
+      padding: 11px 12px;
+      background: #3a2020;
+      color: #ffb1b1;
+      border: 1px solid #714040;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 360px) {
+      .container {
+        width: calc(100% - 22px);
+        padding-top: 22px;
+      }
+
+      .panel, .hero-result {
+        padding: 16px;
+      }
+
+      .metric {
+        padding: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">₦</div>
+        <div>
+          <div class="brand-name">Seller's Toolkit</div>
+          <div class="brand-subtitle">Simple tools for small businesses</div>
+        </div>
+      </div>
+
+      <p class="eyebrow">Know your numbers</p>
+      <h1>Profit Calculator</h1>
+      <p class="intro">Find out what you actually earn from every sale. Enter your costs and selling price to calculate your profit.</p>
+    </header>
+
+    <section class="panel" aria-labelledby="input-title">
+      <h2 class="section-title" id="input-title">Enter your figures</h2>
+
+      <form id="profit-form" novalidate>
+        <div class="error" id="error-message" role="alert"></div>
+
+        <div class="field">
+          <label for="cost">Cost price per item
+            <span class="hint">What you pay to buy or produce one item.</span>
+          </label>
+          <div class="input-wrap">
+            <span class="currency" aria-hidden="true">₦</span>
+            <input id="cost" name="cost" type="number" min="0" max="1000000000000" step="any" placeholder="e.g. 2500" inputmode="decimal" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="extra">Extra costs per item
+            <span class="hint">Transport, packaging, fees, and other costs for one item.</span>
+          </label>
+          <div class="input-wrap">
+            <span class="currency" aria-hidden="true">₦</span>
+            <input id="extra" name="extra" type="number" min="0" max="1000000000000" step="any" placeholder="e.g. 300" value="0" inputmode="decimal" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="selling">Selling price per item</label>
+          <div class="input-wrap">
+            <span class="currency" aria-hidden="true">₦</span>
+            <input id="selling" name="selling" type="number" min="0" max="1000000000000" step="any" placeholder="e.g. 3500" inputmode="decimal" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="quantity">Quantity sold</label>
+          <div class="input-wrap">
+            <input class="quantity-input" id="quantity" name="quantity" type="number" min="1" max="1000000000" step="1" value="1" inputmode="numeric" required>
+          </div>
+        </div>
+
+        <button class="calculate-btn" type="submit">Calculate profit →</button>
+      </form>
+    </section>
+
+    <section class="results" aria-labelledby="results-title" aria-live="polite">
+      <div class="results-heading">
+        <h2 id="results-title">Your results</h2>
+        <span class="live-label" id="result-status">Awaiting calculation</span>
+      </div>
+
+      <div class="hero-result">
+        <div class="hero-label">Total profit / loss</div>
+        <div class="hero-amount" id="total-profit">₦0.00</div>
+        <div class="hero-caption" id="hero-caption">Enter your figures to see your earnings.</div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="metric-label">Profit per item</div>
+          <output class="metric-value positive" id="unit-profit">₦0.00</output>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Profit margin</div>
+          <output class="metric-value" id="margin">—</output>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Markup</div>
+          <output class="metric-value" id="markup">—</output>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Total revenue</div>
+          <output class="metric-value" id="revenue">₦0.00</output>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <h3>Cost breakdown</h3>
+        <div class="breakdown-row">
+          <span>Cost per item (including extras)</span>
+          <span id="unit-cost">₦0.00</span>
+        </div>
+        <div class="breakdown-row">
+          <span>Total product costs</span>
+          <span id="total-product-cost">₦0.00</span>
+        </div>
+        <div class="breakdown-row">
+          <span>Total extra costs</span>
+          <span id="total-extra">₦0.00</span>
+        </div>
+        <div class="breakdown-row">
+          <span>Total costs</span>
+          <span id="total-cost">₦0.00</span>
+        </div>
+      </div>
+
+      <div class="reset-row">
+        <button class="reset-btn" id="reset-btn" type="button">Reset calculator</button>
+      </div>
+    </section>
+
+    <p class="note"><strong>Private by design.</strong> All calculations happen on your device. Nothing is collected or saved.</p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const form = document.getElementById("profit-form");
+      const errorMessage = document.getElementById("error-message");
+      const resetButton = document.getElementById("reset-btn");
+
+      const fields = {
+        cost: document.getElementById("cost"),
+        extra: document.getElementById("extra"),
+        selling: document.getElementById("selling"),
+        quantity: document.getElementById("quantity")
+      };
+
+      const output = {
+        totalProfit: document.getElementById("total-profit"),
+        unitProfit: document.getElementById("unit-profit"),
+        margin: document.getElementById("margin"),
+        markup: document.getElementById("markup"),
+        revenue: document.getElementById("revenue"),
+        unitCost: document.getElementById("unit-cost"),
+        totalProductCost: document.getElementById("total-product-cost"),
+        totalExtra: document.getElementById("total-extra"),
+        totalCost: document.getElementById("total-cost"),
+        caption: document.getElementById("hero-caption"),
+        status: document.getElementById("result-status")
+      };
+
+      const naira = new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      const numberFormat = new Intl.NumberFormat("en-NG", {
+        maximumFractionDigits: 2
+      });
+
+      function money(value) {
+        return naira.format(value);
+      }
+
+      function percentage(value) {
+        return Number.isFinite(value)
+          ? numberFormat.format(value) + "%"
+          : "—";
+      }
+
+      function setProfitColor(element, value) {
+        element.classList.toggle("positive", value > 0);
+        element.classList.toggle("negative", value < 0);
+      }
+
+      function showError(message, field) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = "block";
+        if (field) field.focus();
+      }
+
+      function hideError() {
+        errorMessage.textContent = "";
+        errorMessage.style.display = "none";
+      }
+
+      function calculate(event) {
+        if (event) event.preventDefault();
+        hideError();
+
+        const cost = fields.cost.valueAsNumber;
+        const extra = fields.extra.valueAsNumber;
+        const selling = fields.selling.valueAsNumber;
+        const quantity = fields.quantity.valueAsNumber;
+
+        const values = [
+          { name: "Cost price", value: cost, field: fields.cost },
+          { name: "Extra costs", value: extra, field: fields.extra },
+          { name: "Selling price", value: selling, field: fields.selling }
+        ];
+
+        for (const item of values) {
+          if (!Number.isFinite(item.value) || item.value < 0 || item.value > 1e12) {
+            showError(item.name + " must be a valid amount between ₦0 and ₦1,000,000,000,000.", item.field);
+            return;
+          }
+        }
+
+        if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 1e9) {
+          showError("Quantity must be a whole number between 1 and 1,000,000,000.", fields.quantity);
+          return;
+        }
+
+        const unitCost = cost + extra;
+        const unitProfit = selling - unitCost;
+        const revenue = selling * quantity;
+        const totalProductCost = cost * quantity;
+        const totalExtra = extra * quantity;
+        const totalCost = unitCost * quantity;
+        const totalProfit = revenue - totalCost;
+
+        const calculatedValues = [
+          unitCost, unitProfit, revenue, totalProductCost,
+          totalExtra, totalCost, totalProfit
+        ];
+
+        if (!calculatedValues.every(Number.isFinite)) {
+          showError("These figures are too large to calculate safely. Please enter smaller amounts.", null);
+          return;
+        }
+
+        const margin = revenue > 0 ? (totalProfit / revenue) * 100 : null;
+        const markup = totalCost > 0 ? (totalProfit / totalCost) * 100 : null;
+
+        output.totalProfit.textContent = money(totalProfit);
+        output.unitProfit.textContent = money(unitProfit);
+        output.margin.textContent = margin === null ? "N/A" : percentage(margin);
+        output.markup.textContent = markup === null ? "N/A" : percentage(markup);
+        output.revenue.textContent = money(revenue);
+        output.unitCost.textContent = money(unitCost);
+        output.totalProductCost.textContent = money(totalProductCost);
+        output.totalExtra.textContent = money(totalExtra);
+        output.totalCost.textContent = money(totalCost);
+
+        setProfitColor(output.totalProfit, totalProfit);
+        setProfitColor(output.unitProfit, unitProfit);
+        setProfitColor(output.margin, totalProfit);
+        setProfitColor(output.markup, totalProfit);
+
+        if (totalProfit > 0) {
+          output.caption.textContent = "You're making a profit on these sales.";
+        } else if (totalProfit < 0) {
+          output.caption.textContent = "You're selling at a loss. Review your price or costs.";
+        } else {
+          output.caption.textContent = "You're breaking even. Revenue equals total costs.";
+        }
+
+        output.status.textContent = "Calculated";
+      }
+
+      function reset() {
+        form.reset();
+        hideError();
+
+        output.totalProfit.textContent = money(0);
+        output.unitProfit.textContent = money(0);
+        output.margin.textContent = "—";
+        output.markup.textContent = "—";
+        output.revenue.textContent = money(0);
+        output.unitCost.textContent = money(0);
+        output.totalProductCost.textContent = money(0);
+        output.totalExtra.textContent = money(0);
+        output.totalCost.textContent = money(0);
+        output.caption.textContent = "Enter your figures to see your earnings.";
+        output.status.textContent = "Awaiting calculation";
+
+        [output.totalProfit, output.unitProfit, output.margin, output.markup]
+          .forEach(element => {
+            element.classList.remove("positive", "negative");
+          });
+
+        fields.cost.focus();
+      }
+
+      form.addEventListener("submit", calculate);
+      resetButton.addEventListener("click", reset);
+
+      // Recalculate after a valid result has already been displayed.
+      let hasCalculated = false;
+
+      form.addEventListener("submit", () => {
+        hasCalculated = errorMessage.style.display !== "block";
+      });
+
+      for (const field of Object.values(fields)) {
+        field.addEventListener("input", () => {
+          if (hasCalculated && form.checkValidity()) {
+            calculate();
+          }
+        });
+      }
+
+      resetButton.addEventListener("click", () => {
+        hasCalculated = false;
+      });
+    })();
+  </script>
+</body>
+</html>
